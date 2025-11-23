@@ -1,6 +1,7 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, ReactNode } from "react";
 import type { User } from "../../../drizzle/schema";
 import type { Role } from "../../../shared/permissions";
+import { trpc } from "@/lib/trpc";
 
 interface AuthContextType {
   user: User | null;
@@ -15,46 +16,19 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    // Check if user is authenticated
-    checkAuth();
-  }, []);
-
-  const checkAuth = async () => {
-    try {
-      const response = await fetch("/api/auth/me", {
-        credentials: "include",
-      });
-      
-      if (response.ok) {
-        const userData = await response.json();
-        setUser(userData);
-      } else {
-        setUser(null);
-      }
-    } catch (error) {
-      console.error("Auth check failed:", error);
-      setUser(null);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // Use tRPC query to get current user
+  const { data: user, isLoading } = trpc.auth.me.useQuery();
+  const logoutMutation = trpc.auth.logout.useMutation();
 
   const login = () => {
-    // Redirect to OAuth login
-    window.location.href = "/api/auth/login";
+    // Manus OAuth handles login automatically
+    // Just reload the page to trigger OAuth flow
+    window.location.reload();
   };
 
   const logout = async () => {
     try {
-      await fetch("/api/auth/logout", {
-        method: "POST",
-        credentials: "include",
-      });
-      setUser(null);
+      await logoutMutation.mutateAsync();
       window.location.href = "/";
     } catch (error) {
       console.error("Logout failed:", error);
@@ -70,7 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const value: AuthContextType = {
-    user,
+    user: user ?? null,
     isLoading,
     isAuthenticated: !!user,
     login,
