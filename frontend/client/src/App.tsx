@@ -4,11 +4,14 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { AuthProvider } from "./contexts/AuthContext";
 import DashboardLayout from "./components/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
 import Nurses from "./pages/Nurses";
 import Schedules from "./pages/Schedules";
 import CreateSchedule from "./pages/CreateSchedule";
+import Login from "./pages/Login";
+import Users from "./pages/Users";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -19,6 +22,7 @@ function Router() {
         <Route path="/nurses" component={Nurses} />
         <Route path="/schedules" component={Schedules} />
         <Route path="/create-schedule" component={CreateSchedule} />
+        <Route path="/users" component={Users} />
         <Route path="/404" component={NotFound} />
         {/* Final fallback route */}
         <Route component={NotFound} />
@@ -39,10 +43,12 @@ function App() {
         defaultTheme="light"
         // switchable
       >
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
+        <AuthProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Router />
+          </TooltipProvider>
+        </AuthProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );

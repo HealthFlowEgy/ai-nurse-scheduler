@@ -7,10 +7,15 @@ import {
   CalendarPlus,
   Menu,
   X,
-  Languages
+  Languages,
+  Shield
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { APP_TITLE } from "@/const";
+import { useAuth } from "@/contexts/AuthContext";
+import { usePermission } from "@/hooks/usePermission";
+import { ROLE_LABELS, ROLE_COLORS, type Role } from "../../../shared/permissions";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -21,19 +26,32 @@ interface NavItem {
   label: string;
   labelAr: string;
   icon: React.ElementType;
+  requireRole?: Role;
+  requireAnyRole?: Role[];
 }
 
 const navItems: NavItem[] = [
   { href: "/", label: "Dashboard", labelAr: "لوحة التحكم", icon: LayoutDashboard },
   { href: "/nurses", label: "Nurses", labelAr: "الممرضات", icon: Users },
   { href: "/schedules", label: "Schedules", labelAr: "الجداول", icon: Calendar },
-  { href: "/create-schedule", label: "Create Schedule", labelAr: "إنشاء جدول", icon: CalendarPlus },
+  { href: "/create-schedule", label: "Create Schedule", labelAr: "إنشاء جدول", icon: CalendarPlus, requireAnyRole: ["manager", "admin"] },
+  { href: "/users", label: "User Management", labelAr: "إدارة المستخدمين", icon: Shield, requireRole: "admin" },
 ];
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [location] = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [language, setLanguage] = useState<"en" | "ar">("en");
+  const { user } = useAuth();
+
+  const canAccessItem = (item: NavItem) => {
+    if (!user) return false;
+    if (item.requireRole && user.role !== item.requireRole) return false;
+    if (item.requireAnyRole && !item.requireAnyRole.includes(user.role as Role)) return false;
+    return true;
+  };
+
+  const filteredNavItems = navItems.filter(canAccessItem);
 
   const toggleLanguage = () => {
     setLanguage(prev => prev === "en" ? "ar" : "en");
@@ -86,9 +104,30 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             </p>
           </div>
 
+          {/* User Info */}
+          {user && (
+            <div className="p-4 border-b border-border">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <span className="text-sm font-semibold text-primary">
+                    {user.name?.charAt(0).toUpperCase() || "U"}
+                  </span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-foreground truncate">
+                    {user.name || "User"}
+                  </p>
+                  <Badge variant="outline" className={`text-xs ${ROLE_COLORS[user.role as Role]}`}>
+                    {ROLE_LABELS[user.role as Role]}
+                  </Badge>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Navigation */}
           <nav className="flex-1 p-4 space-y-2 mt-16 lg:mt-0">
-            {navItems.map((item) => {
+            {filteredNavItems.map((item) => {
               const Icon = item.icon;
               const active = isActive(item.href);
               return (

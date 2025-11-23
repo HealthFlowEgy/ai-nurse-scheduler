@@ -13,6 +13,7 @@ import { useRealtimeNurses } from "@/hooks/useRealtimeNurses";
 import { useWebSocket } from "@/hooks/useWebSocket";
 import ConnectionStatus from "@/components/ConnectionStatus";
 import { exportNursesToPDF, exportNursesToExcel } from "@/lib/export";
+import { PermissionGuard } from "@/components/PermissionGuard";
 
 const SKILL_LEVELS = ["JUNIOR", "INTERMEDIATE", "SENIOR", "EXPERT"] as const;
 
@@ -199,13 +200,14 @@ export default function Nurses() {
             <FileSpreadsheet className="h-4 w-4 mr-2" />
             Export Excel
           </Button>
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <DialogTrigger asChild>
-              <Button onClick={() => handleOpenDialog()}>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Nurse
-              </Button>
-            </DialogTrigger>
+          <PermissionGuard permission="create:nurse">
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+              <DialogTrigger asChild>
+                <Button onClick={() => handleOpenDialog()}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Nurse
+                </Button>
+              </DialogTrigger>
             <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
               <DialogTitle>{editingNurse ? "Edit Nurse" : "Add New Nurse"}</DialogTitle>
@@ -272,7 +274,8 @@ export default function Nurses() {
               </Button>
             </DialogFooter>
           </DialogContent>
-        </Dialog>
+            </Dialog>
+          </PermissionGuard>
         </div>
       </div>
 
@@ -410,23 +413,27 @@ export default function Nurses() {
                 </div>
               )}
               <div className="flex gap-2 pt-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex-1"
-                  onClick={() => handleOpenDialog(nurse)}
-                >
-                  <Edit className="h-3 w-3 mr-1" />
-                  Edit
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-destructive hover:text-destructive"
-                  onClick={() => handleDelete(nurse.id)}
-                >
-                  <Trash2 className="h-3 w-3" />
-                </Button>
+                <PermissionGuard permission="edit:nurse">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                    onClick={() => handleOpenDialog(nurse)}
+                  >
+                    <Edit className="h-3 w-3 mr-1" />
+                    Edit
+                  </Button>
+                </PermissionGuard>
+                <PermissionGuard permission="delete:nurse">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-destructive hover:text-destructive"
+                    onClick={() => handleDelete(nurse.id)}
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </Button>
+                </PermissionGuard>
               </div>
             </CardContent>
           </Card>
