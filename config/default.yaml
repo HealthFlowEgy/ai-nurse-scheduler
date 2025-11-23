@@ -1,0 +1,226 @@
+# AI-Enhanced Nurse Scheduler Configuration
+# HealthFlow RegTech - Egypt
+
+hospital:
+  name: "Cairo General Hospital"
+  location: "Cairo, Egypt"
+  department: "General Ward"
+  contact: "admin@healthflow.eg"
+
+schedule:
+  # Planning horizon
+  start_date: "2025-01-01"  # YYYY-MM-DD format
+  planning_horizon_days: 14
+  
+  # Shift configuration
+  shifts_per_day:
+    - morning    # 7:00 - 15:00
+    - afternoon  # 15:00 - 23:00
+    - night      # 23:00 - 7:00
+  
+  # Daily demand per shift type
+  daily_demand:
+    morning: 5
+    afternoon: 4
+    night: 3
+  
+  # Egyptian calendar integration
+  auto_ramadan: true  # Automatically detect Ramadan dates
+  respect_public_holidays: true
+
+optimization:
+  max_iterations: 10
+  time_limit: 300  # seconds
+  
+  # Algorithm parameters
+  max_rotations_per_nurse: 50
+  column_generation_tolerance: 1.0
+  
+  # ML features
+  use_demand_forecasting: false
+  use_fatigue_prediction: false
+  use_rl_branching: false
+
+constraints:
+  # Hard constraints (must be satisfied)
+  hard:
+    max_consecutive_days: 6
+    min_rest_hours: 11
+    max_weekly_hours: 48
+    shift_coverage_required: true
+  
+  # Soft constraints (preferences, can be violated with penalty)
+  soft:
+    prefer_consecutive_rotations: true
+    prefer_skill_mix: true
+    prefer_friday_off: true
+    fairness_weight: 25.0
+    preference_weight: 10.0
+
+nurses:
+  - id: "nurse_001"
+    name: "Ahmed Hassan"
+    name_ar: "أحمد حسن"
+    skill_level: "senior"
+    max_hours_per_week: 48
+    preferred_shifts: ["morning"]
+    avoided_shifts: ["night"]
+    max_consecutive_days: 5
+    prefer_friday_off: true
+    max_night_shifts_per_week: 2
+  
+  - id: "nurse_002"
+    name: "Fatima Mahmoud"
+    name_ar: "فاطمة محمود"
+    skill_level: "intermediate"
+    max_hours_per_week: 48
+    preferred_shifts: ["afternoon", "morning"]
+    avoided_shifts: []
+    max_consecutive_days: 5
+    prefer_friday_off: true
+    avoid_night_shifts_ramadan: true
+    max_night_shifts_per_week: 3
+  
+  - id: "nurse_003"
+    name: "Mohamed Ali"
+    name_ar: "محمد علي"
+    skill_level: "intermediate"
+    max_hours_per_week: 48
+    preferred_shifts: ["night"]
+    avoided_shifts: []
+    max_consecutive_days: 6
+    prefer_friday_off: false
+    max_night_shifts_per_week: 4
+  
+  - id: "nurse_004"
+    name: "Nour Ibrahim"
+    name_ar: "نور إبراهيم"
+    skill_level: "senior"
+    max_hours_per_week: 48
+    preferred_shifts: ["morning", "afternoon"]
+    avoided_shifts: ["night"]
+    max_consecutive_days: 5
+    prefer_friday_off: true
+    max_night_shifts_per_week: 1
+  
+  - id: "nurse_005"
+    name: "Sarah Youssef"
+    name_ar: "سارة يوسف"
+    skill_level: "specialist"
+    max_hours_per_week: 40
+    preferred_shifts: ["morning"]
+    avoided_shifts: ["night"]
+    max_consecutive_days: 4
+    prefer_friday_off: true
+    max_night_shifts_per_week: 0
+  
+  - id: "nurse_006"
+    name: "Karim Mostafa"
+    name_ar: "كريم مصطفى"
+    skill_level: "intermediate"
+    max_hours_per_week: 48
+    preferred_shifts: ["afternoon"]
+    avoided_shifts: []
+    max_consecutive_days: 5
+    prefer_friday_off: true
+    max_night_shifts_per_week: 3
+  
+  - id: "nurse_007"
+    name: "Mona Ahmed"
+    name_ar: "منى أحمد"
+    skill_level: "junior"
+    max_hours_per_week: 40
+    preferred_shifts: ["morning", "afternoon"]
+    avoided_shifts: ["night"]
+    max_consecutive_days: 4
+    prefer_friday_off: true
+    max_night_shifts_per_week: 1
+  
+  - id: "nurse_008"
+    name: "Omar Fathy"
+    name_ar: "عمر فتحي"
+    skill_level: "intermediate"
+    max_hours_per_week: 48
+    preferred_shifts: ["night", "afternoon"]
+    avoided_shifts: []
+    max_consecutive_days: 6
+    prefer_friday_off: false
+    max_night_shifts_per_week: 4
+  
+  - id: "nurse_009"
+    name: "Layla Hassan"
+    name_ar: "ليلى حسن"
+    skill_level: "senior"
+    max_hours_per_week: 48
+    preferred_shifts: ["morning"]
+    avoided_shifts: ["night"]
+    max_consecutive_days: 5
+    prefer_friday_off: true
+    avoid_night_shifts_ramadan: true
+    max_night_shifts_per_week: 2
+  
+  - id: "nurse_010"
+    name: "Hassan Samir"
+    name_ar: "حسن سمير"
+    skill_level: "intermediate"
+    max_hours_per_week: 48
+    preferred_shifts: ["afternoon", "night"]
+    avoided_shifts: []
+    max_consecutive_days: 5
+    prefer_friday_off: true
+    max_night_shifts_per_week: 3
+  
+  - id: "nurse_011"
+    name: "Yasmin Tamer"
+    name_ar: "ياسمين تامر"
+    skill_level: "junior"
+    max_hours_per_week: 40
+    preferred_shifts: ["morning"]
+    avoided_shifts: ["night"]
+    max_consecutive_days: 4
+    prefer_friday_off: true
+    max_night_shifts_per_week: 1
+  
+  - id: "nurse_012"
+    name: "Ali Khaled"
+    name_ar: "علي خالد"
+    skill_level: "senior"
+    max_hours_per_week: 48
+    preferred_shifts: ["morning", "afternoon"]
+    avoided_shifts: []
+    max_consecutive_days: 6
+    prefer_friday_off: true
+    max_night_shifts_per_week: 2
+  
+  - id: "nurse_013"
+    name: "Dina Sayed"
+    name_ar: "دينا سيد"
+    skill_level: "specialist"
+    max_hours_per_week: 40
+    preferred_shifts: ["morning"]
+    avoided_shifts: ["night"]
+    max_consecutive_days: 4
+    prefer_friday_off: true
+    max_night_shifts_per_week: 0
+  
+  - id: "nurse_014"
+    name: "Tarek Nabil"
+    name_ar: "طارق نبيل"
+    skill_level: "intermediate"
+    max_hours_per_week: 48
+    preferred_shifts: ["night"]
+    avoided_shifts: []
+    max_consecutive_days: 5
+    prefer_friday_off: false
+    max_night_shifts_per_week: 4
+  
+  - id: "nurse_015"
+    name: "Rana Magdy"
+    name_ar: "رنا مجدي"
+    skill_level: "intermediate"
+    max_hours_per_week: 48
+    preferred_shifts: ["afternoon"]
+    avoided_shifts: []
+    max_consecutive_days: 5
+    prefer_friday_off: true
+    max_night_shifts_per_week: 3
