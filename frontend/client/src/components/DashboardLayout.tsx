@@ -176,7 +176,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       )}
 
       {/* Main Content */}
-      <main className={`lg:${language === "ar" ? "mr" : "ml"}-64 pt-16 lg:pt-0 min-h-screen`}>
+      <main className={`${language === "ar" ? "lg:mr-64" : "lg:ml-64"} pt-16 lg:pt-0 min-h-screen`}>
         <div className="p-6">
           {children}
         </div>
