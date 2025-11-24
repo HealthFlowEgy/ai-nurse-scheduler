@@ -10,19 +10,20 @@ import Dashboard from "./pages/Dashboard";
 import Nurses from "./pages/Nurses";
 import Schedules from "./pages/Schedules";
 import CreateSchedule from "./pages/CreateSchedule";
-import Login from "./pages/Login";
 import Users from "./pages/Users";
+import Profile from "./pages/Profile";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
     <DashboardLayout>
       <Switch>
-        <Route path="/" component={Dashboard} />
-        <Route path="/nurses" component={Nurses} />
-        <Route path="/schedules" component={Schedules} />
-        <Route path="/create-schedule" component={CreateSchedule} />
-        <Route path="/users" component={Users} />
+      <Route path={"/"} component={Dashboard} />
+      <Route path={"/nurses"} component={Nurses} />
+      <Route path={"/schedules"} component={Schedules} />
+      <Route path={"/create-schedule"} component={CreateSchedule} />
+      <Route path={"/users"} component={Users} />
+      <Route path={"/profile"} component={Profile} />
         <Route path="/404" component={NotFound} />
         {/* Final fallback route */}
         <Route component={NotFound} />

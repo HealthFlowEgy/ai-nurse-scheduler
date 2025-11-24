@@ -8,7 +8,10 @@ import {
   Menu,
   X,
   Languages,
-  Shield
+  Shield,
+  LogOut,
+  UserCircle,
+  Settings
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -42,7 +45,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [location] = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [language, setLanguage] = useState<"en" | "ar">("en");
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   const canAccessItem = (item: NavItem) => {
     if (!user) return false;
@@ -87,10 +90,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       <aside
         className={`
           fixed top-0 ${language === "ar" ? "right-0" : "left-0"} bottom-0 z-40
-          w-64 bg-card border-${language === "ar" ? "l" : "r"} border-border
+          w-64 bg-card ${language === "ar" ? "border-l" : "border-r"} border-border
           transform transition-transform duration-200 ease-in-out
           lg:translate-x-0
-          ${sidebarOpen ? "translate-x-0" : language === "ar" ? "translate-x-full" : "-translate-x-full"}
+          ${sidebarOpen ? "translate-x-0" : (language === "ar" ? "translate-x-full" : "-translate-x-full")}
         `}
       >
         <div className="flex flex-col h-full">
@@ -107,7 +110,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           {/* User Info */}
           {user && (
             <div className="p-4 border-b border-border">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 mb-3">
                 <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
                   <span className="text-sm font-semibold text-primary">
                     {user.name?.charAt(0).toUpperCase() || "U"}
@@ -121,6 +124,17 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                     {ROLE_LABELS[user.role as Role]}
                   </Badge>
                 </div>
+              </div>
+              <div className="flex gap-2">
+                <Link href="/profile">
+                  <Button variant="outline" size="sm" className="flex-1" onClick={() => setSidebarOpen(false)}>
+                    <UserCircle className="h-4 w-4 mr-1" />
+                    {language === "en" ? "Profile" : "الملف الشخصي"}
+                  </Button>
+                </Link>
+                <Button variant="outline" size="sm" onClick={() => { logout(); setSidebarOpen(false); }}>
+                  <LogOut className="h-4 w-4" />
+                </Button>
               </div>
             </div>
           )}
@@ -176,8 +190,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       )}
 
       {/* Main Content */}
-      <main className={`${language === "ar" ? "lg:mr-64" : "lg:ml-64"} pt-16 lg:pt-0 min-h-screen`}>
-        <div className="p-6">
+      <main className={`${language === "ar" ? "lg:mr-64" : "lg:ml-64"} pt-16 lg:pt-0 min-h-screen relative z-10`}>
+        <div className="p-4 md:p-6">
           {children}
         </div>
       </main>
